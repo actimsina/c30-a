@@ -1,73 +1,56 @@
 const express = require('express')
-let books = require('../data/books')
+const Book = require('../models/Book')
 
 const router = express.Router()
 
 router.route('/')
-    .get((req, res) => {
-        res.json(books)
+    .get((req, res, next) => {
+        Book.find()
+            .then(books => res.json(books))
+            .catch(next)
     })
-    .post((req, res) => {
-        if (!req.body.title) {
-            return res.status(400).json({ error: 'title is missing' })
-        }
-        const book = {
-            id: books.length + 1,
-            title: req.body.title,
-            author: req.body.author || 'Anonymous'
-        }
-        books.push(book)
-        res.status(201).json(book)
+    .post((req, res, next) => {
+        Book.create(req.body)
+            .then((book) => res.status(201).json(book))
+            .catch(err => next(err))
     })
     .put((req, res) => {
         res.status(405).json({ error: "PUT request is not allowed" })
     })
-    .delete((req, res) => {
-        res.json({})
+    .delete((req, res, next) => {
+        Book.deleteMany()
+            .then(reply => res.json(reply))
+            .catch(next)
     })
+
 
 // Classwork implement these routes
 router.route('/:book_id')
-    .get((req, res) => {
-
+    .get((req, res, next) => {
+        Book.findById(req.params.book_id)
+            .then((book) => {
+                if (!book) {
+                    res.status(404).json({ error: 'book not found' })
+                }
+                res.json(book)
+            })
+            .catch(next)
     })
     .post((req, res) => {
         res.status(405).json({ error: 'POST request is not allowed' })
     })
-    .put((req, res) => {
-
+    .put((req, res, next) => {
+        Book.findByIdAndUpdate(
+            req.params.book_id,
+            { $set: req.body },
+            { new: true }
+        ).then(updated => res.json(updated))
+            .catch(next)
     })
-    .delete((req, res) => {
-
+    .delete((req, res, next) => {
+        Book.findByIdAndDelete(req.params.book_id)
+            .then(reply => res.status(204).end())
+            .catch(next)
     })
 
 module.exports = router
-
-// app.post('/api/books', (req, res) => {
-// })
-
-// app.put('/api/books/:book_id', (req, res) => {
-//     const updated_books = books.map((b) => {
-//         if (b.id == req.params.book_id) {
-//             b.title = req.body.title
-//             b.author = req.body.author
-//         }
-//         return b
-//     })
-
-//     res.json(updated_books)
-// })
-
-// app.delete('/api/books/:book_id', (req, res) => {
-
-//     const updated_books = books.filter((b) => {
-//         if (b.id != req.params.book_id) return b
-//     })
-//     res.json(updated_books)
-// })
-
-// app.get('/api/books/:book_id', (req, res) => {
-//     const book_id = Number(req.params.book_id)
-//     const book = books.find((b) => b.id === book_id)
-//     res.json(book)
-// })
