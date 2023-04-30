@@ -105,7 +105,7 @@ router.route('/:book_id/reviews/:review_id')
             .then(book => {
                 if (!book) return res.status(404).json({ error: 'book not found' })
                 book.reviews = book.reviews.map((r) => {
-                    if (r._id == req.params.review_id) {
+                    if (r.id === req.params.review_id) {
                         r.text = req.body.text
                     }
                     return r
@@ -120,7 +120,7 @@ router.route('/:book_id/reviews/:review_id')
             .then(book => {
                 if (!book) return res.status(404).json({ error: 'book not found' })
                 book.reviews = book.reviews.filter((r) => {
-                    return r._id != req.params.review_id
+                    return r.id !== req.params.review_id
                 })
                 book.save()
                     .then(book => res.status(204).end())

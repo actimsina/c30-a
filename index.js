@@ -26,7 +26,6 @@ app.use((err, req, res, next) => {
     console.error(err)
     if (err.name === 'ValidationError') res.status(400)
     else if (err.name === 'CastError') res.status(400)
-    console.log(err.message)
     res.json({ error: err.message })
 })
 
