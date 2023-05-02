@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const books_routes = require('./routes/book-routes')
+const user_routes = require('./routes/user-routes')
 
 const port = process.env.PORT
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
     res.send("Hello Node")
 })
 
+app.use('/users', user_routes)
 app.use('/books', books_routes)
 
 // Error handling middleware
