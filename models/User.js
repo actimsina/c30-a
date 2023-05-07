@@ -22,4 +22,15 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+// set toJSON method to not to return hashed password
+
+userSchema.set('toJSON', {
+    transform: (document, returnedDocument) => {
+        returnedDocument.id = document._id.toString()
+        delete returnedDocument._id
+        delete returnedDocument.password
+        delete returnedDocument.__v
+    }
+})
+
 module.exports = new mongoose.model('User', userSchema)

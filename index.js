@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const books_routes = require('./routes/book-routes')
 const user_routes = require('./routes/user-routes')
+const { verifyUser } = require('./middlewares/auth')
 
 const port = process.env.PORT
 
@@ -21,7 +22,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/users', user_routes)
-app.use('/books', books_routes)
+// app.use(verifyUser)
+app.use('/books', verifyUser, books_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
