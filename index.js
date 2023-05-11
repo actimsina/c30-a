@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const books_routes = require('./routes/book-routes')
 const user_routes = require('./routes/user-routes')
 const { verifyUser } = require('./middlewares/auth')
+const upload = require('./middlewares/upload')
 
 const port = process.env.PORT
 
@@ -16,6 +17,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/30-a-books')
 const app = express()
 
 app.use(express.json())
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
     res.send("Hello Node")
@@ -25,6 +27,9 @@ app.use('/users', user_routes)
 // app.use(verifyUser)
 app.use('/books', verifyUser, books_routes)
 
+app.post('/upload', upload.single('photo'), (req, res, next) => {
+    res.json(req.file)
+})
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err)
