@@ -2,14 +2,15 @@ const express = require('express')
 const router = express.Router()
 const bookController = require('../controllers/book-controller')
 const reviewController = require('../controllers/review-controller')
+const { verifyAdmin } = require('../middlewares/auth')
 
 router.route('/')
     .get(bookController.getAllBooks)
-    .post(bookController.createBook)
+    .post(verifyAdmin, bookController.createBook)
     .put((req, res) => {
         res.status(405).json({ error: "PUT request is not allowed" })
     })
-    .delete(bookController.deleteAllBooks)
+    .delete(verifyAdmin, bookController.deleteAllBooks)
 
 router.route('/:book_id')
     .get(bookController.getBookById)
