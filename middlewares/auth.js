@@ -8,7 +8,7 @@ const verifyUser = (req, res, next) => {
     jwt.verify(token, process.env.SECRET, (err, payload) => {
         if (err) return res.status(401).json({ error: err.message })
         req.user = payload
-        console.log(req.user)
+        // console.log(req.user)
     })
     next()
 }
